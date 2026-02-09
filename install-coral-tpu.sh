@@ -26,10 +26,8 @@ cd /usr/src/gasket-1.0/
 sudo sed -i 's/\.llseek = no_llseek,/\.llseek = noop_llseek,/' gasket_core.c
 
 # Patch gasket_page_table.c - Add DMA_BUF namespace import if not present
-if ! grep -q "#ifdef MODULE_IMPORT_NS" gasket_page_table.c; then
+if ! grep -q "MODULE_IMPORT_NS(DMA_BUF)" gasket_page_table.c; then
   echo "Patching gasket_page_table.c for DMA_BUF namespace..."
-  # Remove existing MODULE_IMPORT_NS(DMA_BUF) line if present
-  sudo sed -i '/^MODULE_IMPORT_NS(DMA_BUF);/d' gasket_page_table.c
   # Add conditional DMA_BUF import at the end of the file
   echo -e "\n#ifdef MODULE_IMPORT_NS\nMODULE_IMPORT_NS(DMA_BUF);\n#endif" | sudo tee -a gasket_page_table.c > /dev/null
 fi
